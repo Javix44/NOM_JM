@@ -65,7 +65,7 @@ namespace Northwind.OrderManagement.API.Controllers
                 return Ok(response);
             }
 
-            // PUT: api/orders/{id}
+            // PATCH: api/orders/{id}
             [HttpPatch("{id}")]
             public async Task<IActionResult> Update(int id, [FromBody] UpdateOrderCommand command)
             {
