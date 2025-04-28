@@ -66,7 +66,7 @@ namespace Northwind.OrderManagement.API.Controllers
             }
 
             // PUT: api/orders/{id}
-            [HttpPut("{id}")]
+            [HttpPatch("{id}")]
             public async Task<IActionResult> Update(int id, [FromBody] UpdateOrderCommand command)
             {
                 if (id != command.OrderId)
