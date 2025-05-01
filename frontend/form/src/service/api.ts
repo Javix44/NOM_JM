@@ -1,43 +1,70 @@
-// import { useEffect, useState } from 'react';
-// import axios, { AxiosResponse } from 'axios';
+const API_BASE = 'https://localhost:7021/api';
+import { Customer, Employee, Product, Order, OrderDetails } from '../service/types';
 
-// // Define el tipo de un "Order" si sabes qué campos trae
-// interface Order {
-//   id: number;
-//   customerName: string;
-//   orderDate: string;
-//   // Agrega aquí más campos si tu modelo de datos los tiene
-// }
+//FETCH DATA FROM TABLES TO DROPDOWNS
+// Customers, Employees and Products
+export const fetchCustomers = async (): Promise<Customer[]> => {
+  const res = await fetch(`${API_BASE}/customers`);
+  return res.json();
+};
 
-// function App() {
-//   const [orders, setOrders] = useState<Order[]>([]);
-//   const [loading, setLoading] = useState<boolean>(true);
+export const fetchEmployees = async (): Promise<Employee[]> => {
+  const res = await fetch(`${API_BASE}/employees`);
+  return res.json();
+};
 
-//   useEffect(() => {
-//     console.log('Making GET request to the backend...');
-//     axios.get<Order[]>('https://localhost:7021/api/orders')
-//       .then((response: AxiosResponse<Order[]>) => {
-//         console.log('Orders received:', response.data);
-//         setOrders(response.data);
-//       })
-//       .catch((error: unknown) => {
-//         console.error('Error fetching orders:', error);
-//       })
-//       .finally(() => {
-//         setLoading(false);
-//       });
-//   }, []);
+export const fetchProducts = async (): Promise<Product[]> => {
+  const res = await fetch(`${API_BASE}/products`);
+  return res.json();
+};
 
-//   if (loading) {
-//     return <p>Loading orders...</p>;
-//   }
+//REPORTS
+export const PrintAllOrdersReport = async (): Promise<Blob> => {
+  const res = await fetch(`${API_BASE}/reports/all-orders`);
+  if (!res.ok) {
+    throw new Error('Failed to fetch report');
+  }
+  return res.blob();  // Debe retornar un Blob con el PDF
+};
 
-//   return (
-//     <div>
-//       <h1>Orders List</h1>
-//       <pre>{JSON.stringify(orders, null, 2)}</pre>
-//     </div>
-//   );
-// }
+export const PrintOrderDetailReport = async (orderId: number): Promise<Blob> => {
+  const res = await fetch(`${API_BASE}/reports/order-details-report/${orderId}`);
+  if (!res.ok) {
+    throw new Error('Failed to fetch report');
+  }
+  return res.blob();  // Debe retornar un Blob con el PDF
+};
 
-// export default App;
+
+//CRUD ORDERS
+export const fetchOrders = async (): Promise<Order[]> => {
+  const res = await fetch(`${API_BASE}/orders`);
+  return res.json();
+};
+
+export const fetchOrderById = async (id: number): Promise<Order> => {
+  const res = await fetch(`${API_BASE}/orders/${id}`);
+  return res.json();
+};
+
+export const createOrder = async (order: Order, details: OrderDetails[]): Promise<void> => {
+  await fetch(`${API_BASE}/orders`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ order, details }),
+  });
+};
+
+export const updateOrder = async (id: number, order: Order): Promise<void> => {
+  await fetch(`${API_BASE}/orders/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(order),
+  });
+};
+
+export const deleteOrder = async (id?: number): Promise<void> => {
+  await fetch(`${API_BASE}/orders/${id}`, {
+    method: 'DELETE',
+  });
+};

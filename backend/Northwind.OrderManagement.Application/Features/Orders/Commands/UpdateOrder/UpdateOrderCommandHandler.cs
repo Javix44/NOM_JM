@@ -26,21 +26,12 @@ namespace Northwind.OrderManagement.Application.Features.Orders.Commands.UpdateO
                     Message = $"Order with Id {request.OrderId} not found."
                 };
             }
-
+            //Campos obligatorios
             // Actualiza solo si viene un valor
             if (request.CustomerId != null) order.CustomerId = request.CustomerId;
-            if (request.EmployeeId.HasValue) order.EmployeeId = request.EmployeeId.Value;
             if (request.OrderDate.HasValue) order.OrderDate = request.OrderDate;
-            if (request.RequiredDate.HasValue) order.RequiredDate = request.RequiredDate;
-            if (request.ShippedDate.HasValue) order.ShippedDate = request.ShippedDate;
-            if (request.ShipVia.HasValue) order.ShipVia = request.ShipVia.Value;
-            if (request.Freight.HasValue) order.Freight = request.Freight.Value;
-            if (request.ShipName != null) order.ShipName = request.ShipName;
+            if (request.EmployeeId.HasValue) order.EmployeeId = request.EmployeeId.Value;
             if (request.ShipAddress != null) order.ShipAddress = request.ShipAddress;
-            if (request.ShipCity != null) order.ShipCity = request.ShipCity;
-            if (request.ShipRegion != null) order.ShipRegion = request.ShipRegion;
-            if (request.ShipPostalCode != null) order.ShipPostalCode = request.ShipPostalCode;
-            if (request.ShipCountry != null) order.ShipCountry = request.ShipCountry;
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 

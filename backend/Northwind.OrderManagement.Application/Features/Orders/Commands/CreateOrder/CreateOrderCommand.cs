@@ -19,10 +19,10 @@ namespace Northwind.OrderManagement.Application.Features.Orders.Commands.CreateO
         public string? ShipCountry { get; set; }
 
         // Para líneas del pedido (detalle)
-        public List<OrderItemDto> OrderItems { get; set; }
+        public List<orderDetails> orderDetails { get; set; }
     }
 
-    public class OrderItemDto
+    public class orderDetails
     {
         public int ProductId { get; set; }
         public short Quantity { get; set; }

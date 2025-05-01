@@ -1,0 +1,103 @@
+.order-management-container {
+  padding: 24px;
+}
+
+.button-group {
+  margin-bottom: 24px;
+}
+
+.btn-new {
+  font-weight: bold;
+  background-color: #06427a;
+  color: white;
+  border: none;
+}
+
+.btn-save {
+  font-weight: bold;
+  background-color: rgb(0, 77, 0);
+  color: white;
+  border: none;
+}
+
+.btn-delete {
+  font-weight: bold;
+  background-color: rgb(119, 0, 0);
+  color: white;
+  border: none;
+}
+
+.btn-generate {
+  font-weight: bold;
+}
+
+.btn-move {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-verify {
+  border-radius: 50%;
+  background-color: lightgray;
+  border: none;
+}
+
+.btn-verify.green {
+  background-color: green;
+  color: white;
+}
+
+.lines-header {
+  background-color: lightgray;
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+.lines-title {
+  font-weight: bold;
+  font-size: 18px;
+  text-align: center;
+}
+
+.custom-placeholder::placeholder {
+  color: #555;
+}
+
+.custom-placeholder {
+  width: 100%;
+}
+
+.validated-address {
+  padding: 10px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+}
+
+.map-placeholder {
+  height: 300px; 
+  padding: 0;
+}
+
+.map-placeholder iframe {
+  width: 100%;
+  height: 300px;
+  margin: 0;
+  border: 0;
+  display: block; 
+}
+
+.custom-disabled {
+  background-color: rgb(212, 212, 212);    
+  color: black;            
+  border: 1px solid black;
+  opacity: 1;               
+  cursor: not-allowed;      
+}
+.custom-disabled:disabled {
+  background-color: rgb(212, 212, 212);    
+  border: 1px solid black;
+  color: black;
+  opacity: 1;
+}

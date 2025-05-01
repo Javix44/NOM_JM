@@ -24,30 +24,7 @@ namespace Northwind.OrderManagement.Application.Features.Orders.Commands.CreateO
                 ShipAddress = request.ShipAddress,
                 EmployeeId = request.EmployeeId,
 
-                //Campos no obligatorios
-                RequiredDate = request.RequiredDate,
-                ShippedDate = request.ShippedDate,
-                ShipVia = request.ShipVia,
-                Freight = request.Freight,
-                ShipName = request.ShipName,
-                ShipCity = request.ShipCity,
-                ShipRegion = request.ShipRegion,
-                ShipPostalCode = request.ShipPostalCode,
-                ShipCountry = request.ShipCountry
             };
-
-            // Agregar detalle
-            order.OrderDetails = new List<OrderDetail>();
-
-            foreach (var item in request.OrderItems)
-            {
-                order.OrderDetails.Add(new OrderDetail
-                {
-                    ProductId = item.ProductId,
-                    Quantity = item.Quantity,
-                    UnitPrice = item.UnitPrice
-                });
-            }
 
             _context.Orders.Add(order);
             await _context.SaveChangesAsync(cancellationToken);

@@ -1,0 +1,30 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Start Backend",
+        "type": "shell",
+        "command": "dotnet run --urls=https://localhost:7021",
+        "options": {
+          "cwd": "${workspaceFolder}/backend/Northwind.OrderManagement.API"
+        },
+        "problemMatcher": [],
+        "isBackground": true,
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        }
+      },
+      {
+        "label": "Start Frontend",
+        "type": "shell",
+        "command": "npm run dev",
+        "options": {
+          "cwd": "${workspaceFolder}/frontend/form"
+        },
+        "problemMatcher": [],
+        "isBackground": true
+      }
+    ]
+  }
+  

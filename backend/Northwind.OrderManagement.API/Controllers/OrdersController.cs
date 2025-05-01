@@ -1,9 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Northwind.OrderManagement.Application.Features.Orders.Commands.CreateOrder;
-using Northwind.OrderManagement.Application.Features.Orders.Queries.Northwind.OrderManagement.Application.Features.Orders.Queries.GetOrderById;
 using Northwind.OrderManagement.Application.Features.Orders.Commands.DeteleOrder;
-using Northwind.OrderManagement.Application.Exceptions;
+using Northwind.OrderManagement.Application.Features.Orders.Queries.GetOrderById;
 using Northwind.OrderManagement.Application.Features.Orders.Commands.UpdateOrder;
 
 namespace Northwind.OrderManagement.API.Controllers
@@ -31,7 +30,6 @@ namespace Northwind.OrderManagement.API.Controllers
 
                 return CreatedAtAction(nameof(GetById), new { id = orderId }, orderId);
             }
-
 
             //GET: api/orders/
             [HttpGet]
