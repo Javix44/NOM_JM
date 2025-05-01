@@ -1,7 +1,6 @@
 const API_BASE = 'https://localhost:7021/api';
-import { Customer, Employee, Product, Order } from '../service/types';
-
-//FETCH DATA FROM TABLES TO DROPDOWNS
+import { Customer, Employee, Product, Order, OrderDetails } from '../service/types';
+//-----------------------FETCH DATA FROM TABLES TO DROPDOWNS----------------------------
 // Customers, Employees and Products
 export const fetchCustomers = async (): Promise<Customer[]> => {
   const res = await fetch(`${API_BASE}/customers`);
@@ -18,13 +17,14 @@ export const fetchProducts = async (): Promise<Product[]> => {
   return res.json();
 };
 
-//REPORTS
+//-----------------------REPORTS----------------------------
+
 export const PrintAllOrdersReport = async (): Promise<Blob> => {
   const res = await fetch(`${API_BASE}/reports/all-orders`);
   if (!res.ok) {
     throw new Error('Failed to fetch report');
   }
-  return res.blob();  // Debe retornar un Blob con el PDF
+  return res.blob();
 };
 
 export const PrintOrderDetailReport = async (orderId: number): Promise<Blob> => {
@@ -32,11 +32,12 @@ export const PrintOrderDetailReport = async (orderId: number): Promise<Blob> => 
   if (!res.ok) {
     throw new Error('Failed to fetch report');
   }
-  return res.blob();  // Debe retornar un Blob con el PDF
+  return res.blob();
 };
 
 
-//CRUD ORDERS
+//-----------------------CRUD ORDERS----------------------------
+
 export const fetchOrders = async (): Promise<Order[]> => {
   const res = await fetch(`${API_BASE}/orders`);
   return res.json();
@@ -53,7 +54,7 @@ export const createOrder = async (order: Order): Promise<void> => {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(order)
   });
-  const orderId = await response.json(); 
+  const orderId = await response.json();
   return orderId;
 };
 
@@ -70,3 +71,75 @@ export const deleteOrder = async (id?: number): Promise<void> => {
     method: 'DELETE',
   });
 };
+
+//-----------------------CRUD ORDER DETAILS----------------------------
+
+export const fetchOrdersDetails = async (): Promise<OrderDetails[]> => {
+  const res = await fetch(`${API_BASE}/orderdetails`);
+  return res.json();
+};
+
+export const fetchOrderDetailByIdQuery = async (
+  orderId: number,
+  productId: number
+): Promise<OrderDetails | null> => {
+  const res = await fetch(`${API_BASE}/orderdetails/${orderId}/${productId}`);
+
+  if (res.status === 404) {
+    return null;
+  }
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(`Failed to fetch detail: ${res.status} ${errorText}`);
+  }
+
+  return res.json(); // Devuelve el detalle (un objeto)
+};
+
+
+export const fetchOrderDetailsByOrderId = async (orderId: number): Promise<OrderDetails[]> => {
+  const res = await fetch(`${API_BASE}/orderdetails/order/${orderId}`);
+  return res.json();
+};
+
+export const createOrderDetails = async (detail: OrderDetails): Promise<void> => {
+  const res = await fetch(`${API_BASE}/orderdetails`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(detail),
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Failed to create order detail: ${text}`);
+  }
+};
+
+
+export const updateOrderDetails = async (
+  orderId: number,
+  productId: number,
+  data: OrderDetails
+): Promise<OrderDetails> => {
+  const res = await fetch(`${API_BASE}/orderdetails/${orderId}/${productId}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error('Failed to update order detail');
+  return res.json();
+};
+
+export const deleteOrderDetails = async (
+  orderId: number,
+  productId: number
+): Promise<void> => {
+  const res = await fetch(`${API_BASE}/orderdetails/${orderId}/${productId}`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) throw new Error('Failed to delete order detail');
+  return res.json();
+};
+

@@ -35,5 +35,6 @@ export type OrderDetails = {
   productId: number;
   productName?: string;  
   quantity: number;
-  unitPrice: number;  
+  unitPrice: number;
+  originalProductId?: number;  
 };

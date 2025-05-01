@@ -5,7 +5,7 @@ using Northwind.OrderManagement.Application.Features.OrderDetails.Commands.Delet
 using Northwind.OrderManagement.Application.Features.OrderDetails.Commands.UpdateOrderDetail;
 using Northwind.OrderManagement.Application.Features.OrderDetails.Queries.GetAllOrderDetails;
 using Northwind.OrderManagement.Application.Features.OrderDetails.Queries.GetOrderDetailById;
-using System.Threading.Tasks;
+using Northwind.OrderManagement.Application.Features.OrderDetails.Queries.AllOrderDetailById;
 
 namespace Northwind.OrderManagement.API.Controllers
 {
@@ -46,6 +46,14 @@ namespace Northwind.OrderManagement.API.Controllers
             if (result == null)
                 return NotFound();
 
+            return Ok(result);
+        }
+        // GET: api/orderdetails/order/{orderId}
+        [HttpGet("order/{orderId}")]
+        public async Task<IActionResult> GetByOrderId(int orderId)
+        {
+            var query = new GetAllOrderDetailByIdQuery(orderId);
+            var result = await _mediator.Send(query);
             return Ok(result);
         }
 

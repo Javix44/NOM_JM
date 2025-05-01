@@ -24,9 +24,9 @@ const { Title } = Typography;
 const OrderManagementUI = () => {
   const {
     //data
-    orders, customers, employees, products, shipAddress, 
+    orders, customers, employees, products, shipAddress,
     setShipAddress, selectedEmployee, setSelectedEmployee,
-    selectedCustomer,setSelectedCustomer, orderDate, setOrderDate,
+    selectedCustomer, setSelectedCustomer, orderDate, setOrderDate,
     //selected data order and index
     selectedOrder, selectedIndex, setSelectedOrder, setSelectedIndex,
     //navigation functions
@@ -36,9 +36,9 @@ const OrderManagementUI = () => {
     //CRUD functions ORDERS
     handleOrderDelete, handleNewOrder, handleSaveOrder,
     //CRUD functions ORDERDETAILS
-    handleAddOrEditProduct
+    handleSaveAllOrderDetails, handleProductSelect, handleOrderDetailDelete,
     //Constants utility functions
-    ,orderDetails, setOrderDetails,
+    orderDetails, setOrderDetails,
     productModalVisible, setProductModalVisible,
     setEditingIndex,
   } = useOrderData();
@@ -51,7 +51,7 @@ const OrderManagementUI = () => {
     if (selectedOrder) {
       setSelectedCustomer(selectedOrder.customerId ?? '');
       setSelectedEmployee(selectedOrder.employeeId ?? null);
-      setOrderDate(selectedOrder.orderDate ? dayjs(selectedOrder.orderDate): null);
+      setOrderDate(selectedOrder.orderDate ? dayjs(selectedOrder.orderDate) : null);
       setShipAddress(selectedOrder.shipAddress ?? '');
       setOrderDetails(selectedOrder.orderDetails ?? []);
     }
@@ -141,6 +141,8 @@ const OrderManagementUI = () => {
         selectedProduct={null}
         onOpenModal={() => setProductModalVisible(true)}
         setEditingIndex={setEditingIndex}
+        onSaveDetails={handleSaveAllOrderDetails}
+        onDeleteLine={handleOrderDetailDelete}
       />
 
       <Divider />
@@ -149,9 +151,9 @@ const OrderManagementUI = () => {
       <ProductModal
         visible={productModalVisible}
         products={products}
-        onSelect={handleAddOrEditProduct}
         onCancel={() => setProductModalVisible(false)}
         loading={loading}
+        onSelectProduct={handleProductSelect}
       />
 
       <OrderSearchModal

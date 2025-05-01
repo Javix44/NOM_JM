@@ -5,12 +5,12 @@ import { useState } from 'react';
 type Props = {
   visible: boolean;
   products: Product[];
-  onSelect: (product: Product) => void;
   onCancel: () => void;
   loading: boolean;
+  onSelectProduct: (product: Product) => void;
 };
 
-const ProductModal = ({ visible, products, onSelect, onCancel, loading }: Props) => {
+const ProductModal = ({ visible, products, onCancel, loading,onSelectProduct }: Props) => {
   const [searchText, setSearchText] = useState('');
 
   const filteredProducts = products.filter(product =>
@@ -35,7 +35,7 @@ const ProductModal = ({ visible, products, onSelect, onCancel, loading }: Props)
         dataSource={filteredProducts}
         rowKey="productId"
         onRow={(record) => ({
-          onClick: () => onSelect(record)
+          onClick: () => onSelectProduct(record)
         })}
         columns={[
           {

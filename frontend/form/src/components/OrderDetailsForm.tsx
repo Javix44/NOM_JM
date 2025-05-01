@@ -12,6 +12,8 @@ type Props = {
   selectedProduct: Product | null;
   onOpenModal: () => void;
   setEditingIndex: (index: number | null) => void;
+  onSaveDetails: () => void;
+  onDeleteLine: (index: number) => void;
 };
 
 const OrderDetailsForm = ({
@@ -20,18 +22,18 @@ const OrderDetailsForm = ({
   products,
   onOpenModal,
   setEditingIndex,
+  onSaveDetails,
+  onDeleteLine,
 }: Props) => {
   const handleChange = (index: number, field: keyof OrderDetails, value: string | number) => {
     const updated = [...orderDetails];
-    if (field === 'productId' || field === 'quantity' || field === 'unitPrice' || field === 'orderId') {
-      updated[index][field] = Number(value);
-    }
-    setOrderDetails(updated);
-  };
+    const current = updated[index];
 
-  const handleRemoveLine = (index: number) => {
-    const updated = [...orderDetails];
-    updated.splice(index, 1);
+    updated[index] = {
+      ...current,
+      [field]: Number(value),
+    };
+
     setOrderDetails(updated);
   };
 
@@ -92,7 +94,8 @@ const OrderDetailsForm = ({
             <Col span={4}>
               <Input
                 type="number"
-                value={line.quantity}
+                value={line.quantity
+                }
                 onChange={e => handleChange(i, 'quantity', Number(e.target.value))}
                 placeholder="Quantity"
                 style={{ fontSize: 15 }}
@@ -102,7 +105,7 @@ const OrderDetailsForm = ({
             <Col span={4}>
               <Input
                 className='custom-disabled'
-                value={line.unitPrice}
+                value={`$${line.unitPrice}`}
                 disabled
                 placeholder="Price"
                 style={{ fontSize: 15 }}
@@ -110,7 +113,9 @@ const OrderDetailsForm = ({
             </Col>
             <Col span={4}>
               <Input
-                value={line.quantity * line.unitPrice}
+                value={
+                  `$${line.quantity * line.unitPrice}`
+                }
                 disabled
                 className='custom-disabled'
                 placeholder="Total"
@@ -118,7 +123,9 @@ const OrderDetailsForm = ({
               />
             </Col>
             <Col span={2}>
-              <Button className='btn-delete' onClick={() => handleRemoveLine(i)}>{<DeleteOutlined />}</Button>
+              <Button className='btn-delete' onClick={() => onDeleteLine(i)}>
+                <DeleteOutlined />
+              </Button>
             </Col>
           </Row>
         );
@@ -140,7 +147,10 @@ const OrderDetailsForm = ({
             Add Product
             {<PlusCircleFilled />}
           </Button>
-          <Button type="primary" className='btn-save' style={{ fontSize: 15 }}>
+          <Button type="primary"
+            className='btn-save'
+            onClick={onSaveDetails}
+            style={{ fontSize: 15 }}>
             Save Changes
             {<CheckSquareFilled />}
           </Button>

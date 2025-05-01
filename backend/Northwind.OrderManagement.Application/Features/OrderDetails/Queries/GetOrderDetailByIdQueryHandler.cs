@@ -2,8 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Northwind.OrderManagement.Application.Features.OrderDetails.DTOs;
 using Northwind.OrderManagement.Infrastructure.Persistence;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Northwind.OrderManagement.Application.Features.OrderDetails.Queries.GetOrderDetailById
 {
