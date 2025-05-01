@@ -26,6 +26,8 @@ export type Order = {
   orderDate?: string;
   shipAddress?: string;
   orderDetails?: OrderDetails[];
+  customerCompanyName?: string;
+  employeeFullName?: string;
 };
 
 export type OrderDetails = {

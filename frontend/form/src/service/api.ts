@@ -1,5 +1,5 @@
 const API_BASE = 'https://localhost:7021/api';
-import { Customer, Employee, Product, Order, OrderDetails } from '../service/types';
+import { Customer, Employee, Product, Order } from '../service/types';
 
 //FETCH DATA FROM TABLES TO DROPDOWNS
 // Customers, Employees and Products
@@ -47,17 +47,19 @@ export const fetchOrderById = async (id: number): Promise<Order> => {
   return res.json();
 };
 
-export const createOrder = async (order: Order, details: OrderDetails[]): Promise<void> => {
-  await fetch(`${API_BASE}/orders`, {
+export const createOrder = async (order: Order): Promise<void> => {
+  const response = await fetch(`${API_BASE}/orders`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ order, details }),
+    body: JSON.stringify(order)
   });
+  const orderId = await response.json(); 
+  return orderId;
 };
 
 export const updateOrder = async (id: number, order: Order): Promise<void> => {
   await fetch(`${API_BASE}/orders/${id}`, {
-    method: 'PUT',
+    method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(order),
   });

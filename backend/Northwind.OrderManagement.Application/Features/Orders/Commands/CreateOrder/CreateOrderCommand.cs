@@ -4,7 +4,7 @@ namespace Northwind.OrderManagement.Application.Features.Orders.Commands.CreateO
 {
     public class CreateOrderCommand : IRequest<int>  
     {
-        public string CustomerId { get; set; }
+        public string? CustomerId { get; set; }
         public int EmployeeId { get; set; }
         public DateTime? OrderDate { get; set; }
         public DateTime? ShippedDate { get; set; }

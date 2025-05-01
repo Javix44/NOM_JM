@@ -3,16 +3,24 @@ import OrderManagementUI from './pages/OrderManagementUI';
 function App() {
   return (
     <div style={{
-      padding: '20px',
-      border: '1px solid #ccc',
-      borderRadius: '8px',
-      margin: '40px auto',  
-      backgroundColor: '#f9f9f9',
-      width: '60%',
-      display: 'flex', 
-      justifyContent: 'center'
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: '98vw',
     }}>
-      <OrderManagementUI />
+      <div style={{
+        margin: '20px auto',
+        border: '3px solid #ccc',
+        borderRadius: '8px',
+        backgroundColor: '#f9f9f9',
+        width: '60%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '60px',
+      }}>
+        <OrderManagementUI />
+      </div>
     </div>
   );
 }

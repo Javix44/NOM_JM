@@ -2,14 +2,15 @@ import { useState, useEffect } from 'react';
 import {
   fetchOrders, fetchCustomers, fetchEmployees,
   fetchProducts, PrintAllOrdersReport,
-  PrintOrderDetailReport, deleteOrder
+  PrintOrderDetailReport, deleteOrder,
+  updateOrder,
+  createOrder
 } from '../service/api';
-import { message } from 'antd';
 import { Order, Customer, Employee, Product } from '../service/types';
 import { addOrEditProduct } from '../utils/productUtils';
 import { OrderDetails } from '../service/types';
-import axios from 'axios';
 import { Dayjs } from 'dayjs';
+import Swal from 'sweetalert2';
 
 export const useOrderData = () => {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -26,7 +27,7 @@ export const useOrderData = () => {
   const [selectedEmployee, setSelectedEmployee] = useState<number | null>(null);
   const [orderDate, setOrderDate] = useState<Dayjs | null>(null);
   const [shipAddress, setShipAddress] = useState<string>('');
-  
+
   useEffect(() => {
     const load = async () => {
       try {
@@ -135,39 +136,75 @@ export const useOrderData = () => {
 
   // Function to handle the save of an order or the update of an existing order
   const handleSaveOrder = async () => {
-    const payload = {
-      orderId: selectedOrder?.orderId,
-      customerId: selectedCustomer,
-      employeeId: selectedEmployee,
-      orderDate: orderDate?.toISOString(),
-      shipAddress,
-    };
-
+    if (!selectedEmployee || !selectedCustomer || !orderDate || !shipAddress) {
+      Swal.fire('Validation Error', 'Please complete all required fields.', 'warning');
+      return;
+    }
     try {
       if (selectedOrder?.orderId) {
-        // Update
-        await axios.patch(`/api/orders/${selectedOrder.orderId}`, payload);
-        message.success('Order updated successfully');
-      } else {
-        // Create
-        const response = await axios.post('/api/orders', payload);
-        const newOrderId = response.data;
-        message.success(`Order created with ID ${newOrderId}`);
+        // Actualizar
+        const payload: Order = {
+          orderId: selectedOrder.orderId,
+          customerId: selectedCustomer,
+          employeeId: selectedEmployee,
+          orderDate: orderDate.toISOString(),
+          shipAddress
+        };
+        await updateOrder(selectedOrder.orderId, payload);
+        Swal.fire('Updated', 'Order updated successfully.', 'success');
         reloadOrders();
+      } else {
+        // Crear
+        const createPayload = {
+          customerId: selectedCustomer,
+          employeeId: selectedEmployee,
+          orderDate: orderDate.toISOString(),
+          shipAddress,
+          orderDetails
+        };
+        const newOrderId = await createOrder(createPayload);
+        Swal.fire('Created', `Order #${newOrderId} created successfully.`, 'success');
+        // Recarga órdenes y selecciona el nuevo registro
+        const updated = await reloadOrders();
+        const newIndex = updated.findIndex(o => o.orderId === newOrderId);
+        if (newIndex !== -1) {
+          setSelectedIndex(newIndex);
+          setSelectedOrder(updated[newIndex]);
+        }
       }
     } catch (error) {
       console.error('Error saving order:', error);
-      message.error('Failed to save order');
+      Swal.fire('Error', 'Failed to save order.', 'error');
     }
   };
+
 
   // Function to handle the delete of an order 
   const handleOrderDelete = async () => {
     if (!selectedOrder) return;
-    await deleteOrder(selectedOrder?.orderId);
-    const updated = await reloadOrders();
-    setSelectedOrder(updated[0] ?? null);
+
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you really want to delete this order?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await deleteOrder(selectedOrder.orderId);
+        const updated = await reloadOrders();
+        setSelectedOrder(updated[0] ?? null);
+        Swal.fire('Deleted!', 'The order has been deleted.', 'success');
+      } catch (error) {
+        Swal.fire('Error', 'Failed to delete the order: ' + (error as Error).message, 'error');
+      }
+    }
   };
+
 
   // Function to handle the addition or editing of a product in the order details
   const handleAddOrEditProduct = (product: Product) => {
@@ -189,8 +226,8 @@ export const useOrderData = () => {
     orderDetails, setOrderDetails,
     productModalVisible, setProductModalVisible,
     editingIndex, setEditingIndex, handleNewOrder,
-    handleSaveOrder, setShipAddress, shipAddress,selectedCustomer,
-    setSelectedCustomer,selectedEmployee, setSelectedEmployee,
+    handleSaveOrder, setShipAddress, shipAddress, selectedCustomer,
+    setSelectedCustomer, selectedEmployee, setSelectedEmployee,
     orderDate, setOrderDate,
   };
 };

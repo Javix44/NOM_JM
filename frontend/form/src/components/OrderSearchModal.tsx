@@ -14,8 +14,8 @@ const OrderSearchModal = ({ visible, orders, onSelect, onCancel }: Props) => {
 
   const filtered = orders.filter(order =>
     order.orderId?.toString().includes(searchText) ||
-    order.customer?.companyName?.toLowerCase().includes(searchText.toLowerCase()) ||
-    `${order.employee?.firstName ?? ''} ${order.employee?.lastName ?? ''}`.toLowerCase().includes(searchText.toLowerCase())
+    order.customerCompanyName?.toLowerCase().includes(searchText.toLowerCase()) ||
+    order.employeeFullName?.toLowerCase().includes(searchText.toLowerCase())
   );
 
   return (

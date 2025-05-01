@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import OrderDetailsForm from './OrderDetailsForm';
 import ProductModal from './ProductModal';
 import { Product, OrderDetails } from '../service/types';
-import { message } from 'antd';
+import Swal from 'sweetalert2';
 
 const OrderEditor = ({ products }: { products: Product[] }) => {
   const [orderDetails, setOrderDetails] = useState<OrderDetails[]>([]);
@@ -15,7 +15,7 @@ const OrderEditor = ({ products }: { products: Product[] }) => {
     );
 
     if (isDuplicate) {
-      message.warning('This product is already added.');
+      Swal.fire('Addition Error', 'This product is already added.', 'warning');
       return;
     }
 
