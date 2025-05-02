@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Northwind.OrderManagement.Domain.Entities
+﻿namespace Northwind.OrderManagement.Domain.Entities
 {
     public class Order
     {

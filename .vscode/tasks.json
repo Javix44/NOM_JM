@@ -24,6 +24,14 @@
         },
         "problemMatcher": [],
         "isBackground": true
+      },
+      {
+        "label": "Run Tests",
+        "type": "shell",
+        "command": "dotnet test",
+        "options": {
+          "cwd": "${workspaceFolder}/backend/Northwind.OrderManagement.Tests"
+        }
       }
     ]
   }
