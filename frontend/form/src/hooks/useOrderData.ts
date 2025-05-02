@@ -33,8 +33,9 @@ export const useOrderData = () => {
   const [orderDate, setOrderDate] = useState<Dayjs | null>(null);
   const [shipAddress, setShipAddress] = useState<string>('');
   const [validatedData, setValidatedData] = useState<ValidatedAddress | null>(null);
-  const [mapLoading, setMapLoading] = useState(false);
   const [validationError, setValidationError] = useState(false);
+  const [validationMessage, setValidationMessage] = useState<string | null>(null);
+  const [mapLoading, setMapLoading] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -160,7 +161,7 @@ export const useOrderData = () => {
         await updateOrder(selectedOrder.orderId, payload);
         Swal.fire('Updated', 'Order updated successfully.', 'success');
         reloadOrders();
-        handleValidate(); 
+        handleValidate();
       } else {
         // Crear
         const createPayload = {
@@ -443,7 +444,20 @@ export const useOrderData = () => {
     }
   }, [selectedOrder]);
 
-
+  const handleAddressAutocompleteSelect = async (address: string) => {
+    setShipAddress(address);
+    try {
+      const validated = await validateAddress(address);
+      setValidatedData(validated);
+      setValidationError(false);
+      setValidationMessage(null);
+    } catch (error) {
+      setValidatedData(null);
+      setValidationError(true);
+      setValidationMessage('Invalid address');
+      console.error('Error validating address:', (error as Error).message);
+    }
+  };
 
   return {
     orders, customers, employees, products,
@@ -459,6 +473,6 @@ export const useOrderData = () => {
     setSelectedCustomer, selectedEmployee, setSelectedEmployee,
     orderDate, setOrderDate,
     handleSaveOrderDetail, handleOrderDetailDelete, handleSaveAllOrderDetails,
-    handleProductSelect, handleValidate, validatedData, mapLoading, validationError
+    handleProductSelect, handleValidate, validatedData, mapLoading, validationError, handleAddressAutocompleteSelect
   };
 };

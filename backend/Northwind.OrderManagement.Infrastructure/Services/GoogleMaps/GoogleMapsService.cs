@@ -38,12 +38,6 @@ namespace Northwind.OrderManagement.Domain.Interfaces
 
             var location = result.Geometry.Location;
 
-            // Logging Address Components (for debugging)
-            foreach (var component in result.AddressComponents)
-            {
-                Console.WriteLine($"Component: {component.LongName}, Types: {string.Join(", ", component.Types)}");
-            }
-
             string GetComponent(string type) =>
                 result.AddressComponents.FirstOrDefault(c => c.Types.Contains(type))?.LongName;
 

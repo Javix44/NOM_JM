@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Space, Divider, Typography, Input, Button, DatePicker, Spin } from 'antd';
+import { Row, Col, Space, Divider, Typography, Button, DatePicker, Spin } from 'antd';
 import { CheckOutlined, FileOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
@@ -7,6 +7,7 @@ import dayjs from 'dayjs';
 import { useOrderData } from '../hooks/useOrderData';
 //-----------------------NAGEVATION/CREATION COMPONENTS----------------------------
 import OrderToolbar from '../components/OrderToolbar';
+import AddressAutocomplete from '../components/AddressAutocomplete';
 //-----------------------MAP COMPONENT CARD----------------------------
 import ValidatedAddressCard from '../components/ValidatedAddressCard';
 //-----------------------SELECT COMPONENTS----------------------------
@@ -42,7 +43,7 @@ const OrderManagementUI = () => {
     //Modal functions
     productModalVisible, setProductModalVisible, setEditingIndex,
     //Gogle API functions
-    validatedData, validationError
+    validatedData, validationError, handleAddressAutocompleteSelect
   } = useOrderData();
 
   const [searchModalVisible, setSearchModalVisible] = useState(false);
@@ -107,12 +108,11 @@ const OrderManagementUI = () => {
           <Space direction="vertical" style={{ width: '100%' }}>
             <label style={{ fontSize: '18px', fontWeight: 'bold' }}>Shipping Address</label>
             <Space>
-              <Input
-                placeholder="Shipping address"
-                className="custom-placeholder"
+              <AddressAutocomplete
                 value={shipAddress}
-                onChange={(e) => setShipAddress(e.target.value)}
+                onChange={handleAddressAutocompleteSelect}
               />
+
               <Button
                 type="primary"
                 className={

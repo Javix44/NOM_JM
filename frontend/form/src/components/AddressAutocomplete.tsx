@@ -1,52 +1,62 @@
-// // src/components/AddressAutocomplete.tsx
+/// <reference types="@types/google.maps" />
+import React, { useEffect, useRef } from 'react';
+import { Input } from 'antd';
+import type { InputRef } from 'antd';
+import { loadGoogleMapsScript } from '../utils/loadGoogleMaps';
 
-// import React, { useEffect, useRef } from 'react';
-// import { Input } from 'antd';
-// import type { InputRef } from 'antd';
+interface Props {
+  value: string;
+  onChange: (value: string) => void;
+}
 
-// interface Props {
-//   value: string;
-//   onChange: (value: string) => void;
-// }
+declare global {
+  interface Window {
+    google: typeof google;
+  }
+}
 
-// declare global {
-//   interface Window {
-//     google: typeof google;
-//   }
-// }
+const AddressAutocomplete: React.FC<Props> = ({ value, onChange }) => {
+  const inputRef = useRef<InputRef>(null);
 
-// const AddressAutocomplete: React.FC<Props> = ({ value, onChange }) => {
-//   const inputRef = useRef<InputRef>(null);
+  useEffect(() => {
+    const initAutocomplete = async () => {
+      try {
+        await loadGoogleMapsScript();
 
-//   useEffect(() => {
-//     const input = inputRef.current?.input;
+        const input = inputRef.current?.input;
+        if (!input || !window.google) return;
 
-//     if (!input || typeof window.google === 'undefined') return;
+        const autocompleteInstance = new window.google.maps.places.Autocomplete(input, {
+          types: ['geocode'],
+        });
 
-//     const autocompleteInstance = new window.google.maps.places.Autocomplete(input, {
-//       types: ['geocode'],
-//     });
+        autocompleteInstance.addListener('place_changed', () => {
+          const place = autocompleteInstance.getPlace();
+          if (place.formatted_address) {
+            onChange(place.formatted_address);
+          }
+        });
 
-//     autocompleteInstance.addListener('place_changed', () => {
-//       const place = autocompleteInstance.getPlace();
-//       if (place.formatted_address) {
-//         onChange(place.formatted_address);
-//       }
-//     });
+        return () => {
+          window.google.maps.event.clearInstanceListeners(autocompleteInstance);
+        };
+      } catch (error) {
+        console.error('Failed to load Google Maps script:', error);
+      }
+    };
 
-//     return () => {
-//       window.google.maps.event.clearInstanceListeners(autocompleteInstance);
-//     };
-//   }, []);
+    initAutocomplete();
+  }, []);
 
-//   return (
-//     <Input
-//       ref={inputRef}
-//       value={value}
-//       onChange={(e) => onChange(e.target.value)}
-//       placeholder="Start typing address..."
-//     />
-//   );
-// };
+  return (
+    <Input
+      ref={inputRef}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder="Start typing address..."
+      type="text"
+    />
+  );
+};
 
-// export default AddressAutocomplete;
+export default AddressAutocomplete;
