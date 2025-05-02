@@ -3,6 +3,7 @@ using Northwind.OrderManagement.Application.Features.Orders.Commands.CreateOrder
 using Northwind.OrderManagement.Infrastructure.Persistence;
 using Microsoft.OpenApi.Models;
 using QuestPDF.Infrastructure;
+using Northwind.OrderManagement.Domain.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +41,9 @@ builder.Services.AddSwaggerGen(c =>
 //Licencia de Uso de Generacion de PDF
 QuestPDF.Settings.License = LicenseType.Community;
 QuestPDF.Settings.EnableDebugging = true;
+
+// Configuracion de Google Maps
+builder.Services.AddScoped<IGoogleMapsService, GoogleMapsService>();
 
 var app = builder.Build();
 

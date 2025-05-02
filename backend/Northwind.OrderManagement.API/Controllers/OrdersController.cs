@@ -4,6 +4,7 @@ using Northwind.OrderManagement.Application.Features.Orders.Commands.CreateOrder
 using Northwind.OrderManagement.Application.Features.Orders.Commands.DeteleOrder;
 using Northwind.OrderManagement.Application.Features.Orders.Queries.GetOrderById;
 using Northwind.OrderManagement.Application.Features.Orders.Commands.UpdateOrder;
+using Northwind.OrderManagement.Application.Features.Orders.Commands.ValidateAddress;
 
 namespace Northwind.OrderManagement.API.Controllers
 {
@@ -18,6 +19,7 @@ namespace Northwind.OrderManagement.API.Controllers
             _mediator = mediator;
         }
 
+        //POST: api/orders/
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateOrderCommand command)
         {
@@ -79,7 +81,12 @@ namespace Northwind.OrderManagement.API.Controllers
 
             return Ok(response);
         }
-
-
+        //POST: api/orders/validate-address
+        [HttpPost("validate-address")]
+        public async Task<IActionResult> ValidateAddress([FromBody] ValidateAddressCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
     }
 }

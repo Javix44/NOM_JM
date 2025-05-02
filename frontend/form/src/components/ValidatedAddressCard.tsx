@@ -1,32 +1,91 @@
-// /components/ValidatedAddressCard.tsx
-import { Card, Col, Divider, Input, Row, Typography } from 'antd';
+import { Spin, Card, Col, Divider, Input, Row, Typography } from 'antd';
+import React from 'react';
 
-const ValidatedAddressCard = () => {
-  const fields = ['Street', 'City', 'State', 'Postal Code', 'Country', 'Geocoded Coordinates'];
+interface Props {
+  validatedData: {
+    formattedAddress: string;
+    street: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    country: string;
+    latitude: number;
+    longitude: number;
+  } | null;
+  maploading: boolean;
+}
 
+const ValidatedAddressCard: React.FC<Props> = ({ validatedData, maploading }) => {
   return (
     <div>
       <Typography.Title level={2}>Validated Address</Typography.Title>
       <Row gutter={16}>
-        {fields.map(field => (
-          <Col span={8} key={field}>
-            <label
-              style={{ fontSize: '18px', fontWeight: 'bold' }}
-            >{field}</label>
-            <Input placeholder={field}
-              className='custom-disabled'
-              disabled />
-          </Col>
-        ))}
+        <Col span={8}>
+          <label>Street</label>
+          <Input
+            className='custom-disabled'
+            value={validatedData?.street || ''} disabled />
+        </Col>
+        <Col span={8}>
+          <label>City</label>
+          <Input
+            className='custom-disabled'
+
+            value={validatedData?.city || ''} disabled />
+        </Col>
+        <Col span={8}>
+          <label>State</label>
+          <Input
+            className='custom-disabled'
+
+            value={validatedData?.state || ''} disabled />
+        </Col>
+        <Col span={8}>
+          <label>Postal Code</label>
+          <Input
+            className='custom-disabled'
+
+            value={validatedData?.postalCode || ''} disabled />
+        </Col>
+        <Col span={8}>
+          <label>Country</label>
+          <Input
+            className='custom-disabled'
+
+            value={validatedData?.country || ''} disabled />
+        </Col>
+        <Col span={8}>
+          <label>Geocoded Coordinates</label>
+          <Input
+            className='custom-disabled'
+            value={
+              validatedData
+                ? `${validatedData.latitude}, ${validatedData.longitude}`
+                : ''
+            }
+            disabled
+          />
+        </Col>
       </Row>
+
       <Divider />
       <Card className="map-placeholder" bodyStyle={{ padding: 5 }}>
-        <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3876.511342802469!2d-89.5611648!3d13.9792887!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTPCsDU4JzQ1LjQiTiA4OcKwMzMnNDAuMiJX!5e0!3m2!1ses!2ssv!4v1680000000000"
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-        ></iframe>
+        <Spin spinning={maploading}
+          tip="Loading map...">
+          {validatedData && (
+            <iframe
+              key={`${validatedData.latitude}-${validatedData.longitude}`} // Fuerza rerender
+              width="100%"
+              height="300"
+              loading="lazy"
+              src={`https://maps.google.com/maps?q=${validatedData.latitude},${validatedData.longitude}&z=15&output=embed`}
+              referrerPolicy="no-referrer-when-downgrade"
+              style={{ border: 0 }}
+            ></iframe>
+          )}
+        </Spin>
       </Card>
+
     </div>
   );
 };

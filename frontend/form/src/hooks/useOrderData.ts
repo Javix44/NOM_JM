@@ -9,9 +9,10 @@ import {
   createOrderDetails,
   deleteOrderDetails,
   fetchOrderDetailsByOrderId,
-  fetchOrderDetailByIdQuery
+  fetchOrderDetailByIdQuery,
+  validateAddress
 } from '../service/api';
-import { Order, Customer, Employee, Product } from '../service/types';
+import { Order, Customer, Employee, Product, ValidatedAddress } from '../service/types';
 import { OrderDetails } from '../service/types';
 import { Dayjs } from 'dayjs';
 import Swal from 'sweetalert2';
@@ -31,6 +32,9 @@ export const useOrderData = () => {
   const [selectedEmployee, setSelectedEmployee] = useState<number | null>(null);
   const [orderDate, setOrderDate] = useState<Dayjs | null>(null);
   const [shipAddress, setShipAddress] = useState<string>('');
+  const [validatedData, setValidatedData] = useState<ValidatedAddress | null>(null);
+  const [mapLoading, setMapLoading] = useState(false);
+  const [validationError, setValidationError] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -156,6 +160,7 @@ export const useOrderData = () => {
         await updateOrder(selectedOrder.orderId, payload);
         Swal.fire('Updated', 'Order updated successfully.', 'success');
         reloadOrders();
+        handleValidate(); 
       } else {
         // Crear
         const createPayload = {
@@ -263,7 +268,6 @@ export const useOrderData = () => {
 
           if (hasChanges) {
             await updateOrderDetails(orderId, newProductId, detailPayload);
-            Swal.fire('Updated', 'Order detail updated successfully.', 'success');
           } else {
             console.log('⚠️ No se detectaron cambios, no se actualiza.');
           }
@@ -297,20 +301,33 @@ export const useOrderData = () => {
   const handleSaveAllOrderDetails = async () => {
     if (!selectedOrder || !selectedOrder.orderId) return;
 
+    let hasErrors = false;
+
     try {
       for (const detail of orderDetails) {
         const product = products.find(p => p.productId === detail.productId);
         if (product) {
-          console.log('🔎 Orden a guardar:', detail);
-          await handleSaveOrderDetail(product, detail.quantity, detail.unitPrice, detail.originalProductId);
+          try {
+            console.log('🔎 Orden a guardar:', detail);
+            await handleSaveOrderDetail(product, detail.quantity, detail.unitPrice, detail.originalProductId);
+          } catch (error) {
+            console.error('Error guardando detalle:', error);
+            hasErrors = true;
+          }
         }
       }
-      Swal.fire('Success', 'All order details saved successfully.', 'success');
+      if (!hasErrors) {
+        Swal.fire('Success', 'All order details saved successfully.', 'success');
+      } else {
+        Swal.fire('Partial Success', 'Some order details could not be saved.', 'warning');
+      }
     } catch (error) {
-      console.error(error);
+      console.error('Error general:', error);
       Swal.fire('Error', 'An error occurred while saving order details.', 'error');
     }
   };
+
+
   const handleProductSelect = (product: Product) => {
     if (editingIndex !== null) {
       const updated = [...orderDetails];
@@ -375,6 +392,59 @@ export const useOrderData = () => {
     }
   };
 
+  //-----------------------GOOGLE MAPS----------------------------
+  const handleValidate = async () => {
+    setMapLoading(true);
+    setValidationError(false);
+    try {
+      const data = await validateAddress(shipAddress);
+      if (data) {
+        setValidatedData(data);
+        setValidationError(false);
+      } else {
+        setValidatedData(null);
+        setValidationError(true);
+      }
+    } catch (error) {
+      console.error('Error validando dirección:', error);
+      setValidatedData(null);
+      setValidationError(true);
+    } finally {
+      setMapLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedOrder?.shipAddress) {
+      setShipAddress(selectedOrder.shipAddress);
+      setMapLoading(true);
+      setValidationError(false);
+      validateAddress(selectedOrder.shipAddress)
+        .then(data => {
+          if (data) {
+            setValidatedData(data);
+            setValidationError(false);
+          } else {
+            setValidatedData(null);
+            setValidationError(true);
+          }
+        })
+        .catch(err => {
+          console.error('Error validando dirección:', err);
+          setValidatedData(null);
+          setValidationError(true);
+        })
+        .finally(() => setMapLoading(false));
+    } else {
+      setShipAddress('');
+      setValidatedData(null);
+      setValidationError(false);
+      setMapLoading(false);
+    }
+  }, [selectedOrder]);
+
+
+
   return {
     orders, customers, employees, products,
     selectedOrder, selectedIndex,
@@ -389,8 +459,6 @@ export const useOrderData = () => {
     setSelectedCustomer, selectedEmployee, setSelectedEmployee,
     orderDate, setOrderDate,
     handleSaveOrderDetail, handleOrderDetailDelete, handleSaveAllOrderDetails,
-
-
-    handleProductSelect
+    handleProductSelect, handleValidate, validatedData, mapLoading, validationError
   };
 };

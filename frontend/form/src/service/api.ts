@@ -1,5 +1,5 @@
 const API_BASE = 'https://localhost:7021/api';
-import { Customer, Employee, Product, Order, OrderDetails } from '../service/types';
+import { Customer, Employee, Product, Order, OrderDetails, ValidatedAddress } from '../service/types';
 //-----------------------FETCH DATA FROM TABLES TO DROPDOWNS----------------------------
 // Customers, Employees and Products
 export const fetchCustomers = async (): Promise<Customer[]> => {
@@ -93,9 +93,8 @@ export const fetchOrderDetailByIdQuery = async (
     throw new Error(`Failed to fetch detail: ${res.status} ${errorText}`);
   }
 
-  return res.json(); // Devuelve el detalle (un objeto)
+  return res.json();
 };
-
 
 export const fetchOrderDetailsByOrderId = async (orderId: number): Promise<OrderDetails[]> => {
   const res = await fetch(`${API_BASE}/orderdetails/order/${orderId}`);
@@ -116,7 +115,6 @@ export const createOrderDetails = async (detail: OrderDetails): Promise<void> =>
     throw new Error(`Failed to create order detail: ${text}`);
   }
 };
-
 
 export const updateOrderDetails = async (
   orderId: number,
@@ -143,3 +141,21 @@ export const deleteOrderDetails = async (
   return res.json();
 };
 
+//-----------------------GOOGLE MAPS----------------------------
+
+export const validateAddress = async (address: string): Promise<ValidatedAddress> => {
+  const response = await fetch(`${API_BASE}/orders/validate-address`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ rawAddress: address }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to validate address: ${response.statusText}`);
+  }
+
+  const data: ValidatedAddress = await response.json();
+  return data;
+};

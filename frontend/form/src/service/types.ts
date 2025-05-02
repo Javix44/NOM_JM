@@ -33,8 +33,18 @@ export type Order = {
 export type OrderDetails = {
   orderId?: number;
   productId: number;
-  productName?: string;  
+  productName?: string;
   quantity: number;
   unitPrice: number;
-  originalProductId?: number;  
+  originalProductId?: number;
 };
+export interface ValidatedAddress {
+  formattedAddress: string;
+  street: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+  latitude: number;
+  longitude: number;
+}

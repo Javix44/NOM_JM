@@ -39,8 +39,10 @@ const OrderManagementUI = () => {
     handleSaveAllOrderDetails, handleProductSelect, handleOrderDetailDelete,
     //Constants utility functions
     orderDetails, setOrderDetails,
-    productModalVisible, setProductModalVisible,
-    setEditingIndex,
+    //Modal functions
+    productModalVisible, setProductModalVisible, setEditingIndex,
+    //Gogle API functions
+    validatedData, validationError
   } = useOrderData();
 
   const [searchModalVisible, setSearchModalVisible] = useState(false);
@@ -111,7 +113,28 @@ const OrderManagementUI = () => {
                 value={shipAddress}
                 onChange={(e) => setShipAddress(e.target.value)}
               />
-              <Button icon={<CheckOutlined />} />
+              <Button
+                type="primary"
+                className={
+                  loading
+                    ? ''
+                    : validationError
+                      ? 'btn-delete'
+                      : validatedData
+                        ? 'btn-save'
+                        : ''
+                }
+                icon={
+                  loading ? (
+                    <Spin size="small" />
+                  ) : (
+                    <CheckOutlined />
+                  )
+                }
+                disabled={!validatedData}
+              />
+              <div>{validationError && <div style={{ color: 'red', fontSize: 16, fontStyle: "bold" }}>❌ Invalid address</div>}</div>
+
             </Space>
             <EmployeeSelect
               employees={employees}
@@ -146,8 +169,10 @@ const OrderManagementUI = () => {
       />
 
       <Divider />
-      <ValidatedAddressCard />
-
+      <ValidatedAddressCard
+        validatedData={validatedData}
+        maploading={loading}
+      />
       <ProductModal
         visible={productModalVisible}
         products={products}
