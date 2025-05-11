@@ -38,6 +38,7 @@
 * [.NET SDK 5.0](https://dotnet.microsoft.com/download) or later
 * [Node.js 14](https://nodejs.org/en/download) or later
 * Google Maps API Key (set in `.env` file)
+* Northwind Database (File `instnwnd.sql`)
 
 ### 🛠️ Installation
 
@@ -74,7 +75,21 @@
    ```env
    REACT_APP_GOOGLE_MAPS_API_KEY=your_api_key_here
    ```
+   
+   Add your Google Maps API key in `appsettings.Development.json` file in the `Backend`:
+   ```env
+   "GoogleMaps": {
+    "ApiKey": "your_api_key_here"
+   }   
+   ```
 
+5. Running the App
+ 
+   There is a `tasks.json` file in the .vscode folder that allows you to run the backend, frontend, and tests individually:
+   * Press F1 in Visual Studio Code.
+   * Select "Tasks: Run Task".
+   * Choose the task you want to execute (backend, frontend, or tests).
+    
 ---
 
 ## 🔌 API Endpoints
@@ -113,7 +128,7 @@
 ```
 OrderManagementSystem/
 ├── Backend/
-│   ├── Controllers/
+│   ├── API/
 │   ├── Application/
 │   ├── Domain/
 │   ├── Infrastructure/
@@ -124,11 +139,11 @@ OrderManagementSystem/
 │   │   ├── components/
 │   │   ├── pages/
 │   │   ├── services/
+│   │   ├── hooks/
 │   │   └── ...
 │   └── ...
 └── README.md
 ```
-
 
 
 ---
